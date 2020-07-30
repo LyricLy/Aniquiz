@@ -8,7 +8,6 @@ from collections import defaultdict
 
 import anilist
 import mal
-import trigram
 
 import aiohttp
 import discord
