@@ -15,6 +15,7 @@ from discord.ext import commands
 
 
 bot = commands.Bot(command_prefix="q!")
+bot.load_extension("jishaku")
 bot.session = aiohttp.ClientSession(connector=aiohttp.TCPConnector(family=socket.AF_INET))
 bot.games = {}
 
@@ -137,6 +138,15 @@ async def quiz(ctx, joiner, *, lists):
         await client.disconnect()
 
 @bot.command()
+async def stop(ctx):
+    if ctx.guild not in bot.games:
+        return await ctx.send("Nothing's happening. Go away.")
+
+    client = bot.games[ctx.guild]["client"]
+    del bot.games[ctx.guild]
+    client.stop()
+
+@bot.command()
 async def skip(ctx):
     if ctx.guild not in bot.games:
         return await ctx.send("Nothing's happening. Go away.")
@@ -164,7 +174,7 @@ async def guess(ctx, *, title):
         game["players"][ctx.author] += 1
         if game["players"][ctx.author] == 5:
             await ctx.send(f"{ctx.author} wins! GG!")
-            bot.games.pop(ctx.guild)
+            del bot.games[ctx.guild]
         game["client"].stop()
     else:
         await ctx.send(f"It's not *{match.name}*.")
