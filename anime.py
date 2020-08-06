@@ -1,3 +1,6 @@
+import string
+
+
 def triples(s):
     l = [c for c in s.lower() if c in string.ascii_lowercase + string.digits]
     return {"".join(l[i:i+3]) for i in range(0, len(l)-2)}
